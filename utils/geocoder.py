@@ -11,17 +11,25 @@ def get_coordinates(place):
     }
 
     headers = {
-        "User-Agent": "smart-route-ai-project"
+        "User-Agent": "smart-route-ai-project (your_email@example.com)"
     }
 
-    response = requests.get(url, params=params, headers=headers)
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=10)
 
-    data = response.json()
+        # check if request failed
+        if response.status_code != 200:
+            return None
 
-    if len(data) == 0:
+        data = response.json()
+
+        if not data:
+            return None
+
+        lat = float(data[0]["lat"])
+        lon = float(data[0]["lon"])
+
+        return lat, lon
+
+    except Exception as e:
         return None
-
-    lat = float(data[0]["lat"])
-    lon = float(data[0]["lon"])
-
-    return lat, lon
